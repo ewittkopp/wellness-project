@@ -2,10 +2,11 @@ import { Component, inject, signal} from '@angular/core';
 import { HabitService } from '../habits.service';
 import { FormsModule } from '@angular/forms';
 import { Habit } from '../habits.service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-habits',
-  imports: [FormsModule],
+  imports: [FormsModule, DecimalPipe],
   templateUrl: './habits.html',
   styleUrl: './habits.css',
 })
