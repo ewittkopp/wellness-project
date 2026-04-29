@@ -4,7 +4,7 @@ import { db } from './firebase.config';
 
 export interface Habit {
   id?: string;
-userId?: string;
+userId: string;
 name: string;
 frequency: 'Daily' | 'Weekly';
 startDate: any;

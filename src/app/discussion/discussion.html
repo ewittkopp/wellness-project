@@ -1,0 +1,64 @@
+<div class="container mt-4">
+
+    <div class="card p-3 mb-4">
+      <h5>Start New Discussion</h5>
+  
+      <input 
+        type="text"
+        placeholder="Title"
+        [ngModel]="title()"
+        (ngModelChange)="title.set($event)"
+        class="form-control mb-2"
+      >
+  
+      <textarea 
+        placeholder="Write your message..."
+        [ngModel]="message()"
+        (ngModelChange)="message.set($event)"
+        class="form-control mb-2"
+      ></textarea>
+  
+      @if (selectedDiscussion()) {
+        <button (click)="editDiscussion()" class="btn btn-warning">Edit</button>
+      } @else {
+        <button (click)="addDiscussion()" class="btn btn-primary">Post</button>
+      }
+    </div>
+  
+    <h5>Discussions</h5>
+  
+    @for (d of discussionService.discussions(); track d.id) {
+      <div class="card p-3 mb-3">
+  
+        <h6 class="mb-1">{{ d.title }}</h6>
+  
+        <p class="mb-2">{{ d.message }}</p>
+  
+\        <p class="text-muted mb-2">
+          Posted by: {{ d.userId }}
+          |
+          {{ d.createdAt?.toDate() | date:'short' }}
+        </p>
+  
+        @if (d.userId === 'demoUser') {
+          <div class="d-flex gap-2">
+            <button 
+              (click)="selectDiscussion(d)" 
+              class="btn btn-sm btn-outline-primary"
+            >
+              Edit
+            </button>
+  
+            <button 
+              (click)="deleteDiscussion(d.id!)" 
+              class="btn btn-sm btn-outline-danger"
+            >
+              Delete
+            </button>
+          </div>
+        }
+  
+      </div>
+    }
+  
+  </div>
