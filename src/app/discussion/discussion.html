@@ -1,64 +1,89 @@
 <div class="container mt-4">
 
-    <div class="card p-3 mb-4">
-      <h5>Start New Discussion</h5>
-  
-      <input 
-        type="text"
-        placeholder="Title"
-        [ngModel]="title()"
-        (ngModelChange)="title.set($event)"
-        class="form-control mb-2"
-      >
-  
-      <textarea 
-        placeholder="Write your message..."
-        [ngModel]="message()"
-        (ngModelChange)="message.set($event)"
-        class="form-control mb-2"
-      ></textarea>
-  
-      @if (selectedDiscussion()) {
-        <button (click)="editDiscussion()" class="btn btn-warning">Edit</button>
-      } @else {
-        <button (click)="addDiscussion()" class="btn btn-primary">Post</button>
-      }
-    </div>
-  
-    <h5>Discussions</h5>
-  
-    @for (d of discussionService.discussions(); track d.id) {
-      <div class="card p-3 mb-3">
-  
-        <h6 class="mb-1">{{ d.title }}</h6>
-  
-        <p class="mb-2">{{ d.message }}</p>
-  
-\        <p class="text-muted mb-2">
-          Posted by: {{ d.userId }}
-          |
-          {{ d.createdAt?.toDate() | date:'short' }}
-        </p>
-  
-        @if (d.userId === 'demoUser') {
-          <div class="d-flex gap-2">
-            <button 
-              (click)="selectDiscussion(d)" 
-              class="btn btn-sm btn-outline-primary"
-            >
-              Edit
-            </button>
-  
-            <button 
-              (click)="deleteDiscussion(d.id!)" 
-              class="btn btn-sm btn-outline-danger"
-            >
-              Delete
-            </button>
-          </div>
-        }
-  
-      </div>
+  <div class="card p-3 mb-4">
+    <h5>Start New Discussion</h5>
+
+    <input
+      type="text"
+      placeholder="Title"
+      class="form-control mb-2"
+      [ngModel]="title()"
+      (ngModelChange)="title.set($event)"
+    />
+
+    <textarea
+      placeholder="Write your message..."
+      class="form-control mb-2"
+      [ngModel]="message()"
+      (ngModelChange)="message.set($event)"
+    ></textarea>
+
+    @if (selectedDiscussion()) {
+      <button (click)="editDiscussion()" class="btn btn-warning">Edit</button>
+    } @else {
+      <button (click)="addDiscussion()" class="btn btn-primary">Post</button>
     }
-  
   </div>
+
+  <h5>Discussions</h5>
+
+  @for (d of discussionService.discussions(); track d.id) {
+    <div class="card p-3 mb-3">
+
+      <h6 class="mb-1">{{ d.title }}</h6>
+      <p class="mb-2">{{ d.message }}</p>
+
+      <p class="text-muted mb-2">
+        Posted by: {{ d.userId }} |
+        {{ d.createdAt.toDate() | date:'short' }}
+      </p>
+
+      @if (d.userId === 'demoUser') {
+        <div class="d-flex gap-2 mb-2">
+          <button 
+            (click)="selectDiscussion(d)" 
+            class="btn btn-sm btn-outline-primary">
+            Edit
+          </button>
+
+          <button 
+            (click)="deleteDiscussion(d.id!)" 
+            class="btn btn-sm btn-outline-danger">
+            Delete
+          </button>
+        </div>
+      }
+
+      <div class="mt-2">
+        <input
+          type="text"
+          placeholder="Write a reply..."
+          class="form-control"
+          [ngModel]="replyMessage()"
+          (ngModelChange)="replyMessage.set($event)"
+        />
+
+        <button 
+          class="btn btn-sm btn-primary mt-1"
+          (click)="addReply(d.id!)">
+          Reply
+        </button>
+      </div>
+
+      <div class="mt-2" style="margin-left: 20px;">
+        @for (r of replyService.replies(); track r.id) {
+          @if (r.postId === d.id) {
+            <div class="card p-2 mb-1">
+              <p class="mb-1">{{ r.message }}</p>
+              <small class="text-muted">
+                {{ r.userId }} | {{ r.createdAt.toDate() | date:'short' }}
+              </small>
+            </div>
+          }
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
