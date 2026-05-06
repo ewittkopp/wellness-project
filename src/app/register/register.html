@@ -1,0 +1,60 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4 shadow" style="width: 100%; max-width: 420px">
+    <h3 class="text-center mb-4 fw-bold">Create Account</h3>
+
+    <div *ngIf="errorMessage()" class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <label class="form-label">First Name</label>
+        <input
+          type="text"
+          class="form-control"
+          [ngModel]="firstName()"
+          (ngModelChange)="firstName.set($event)"
+          placeholder="First name"
+        />
+      </div>
+      <div class="col">
+        <label class="form-label">Last Name</label>
+        <input
+          type="text"
+          class="form-control"
+          [ngModel]="lastName()"
+          (ngModelChange)="lastName.set($event)"
+          placeholder="Last name"
+        />
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        [ngModel]="email()"
+        (ngModelChange)="email.set($event)"
+        placeholder="Enter your email"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        [ngModel]="password()"
+        (ngModelChange)="password.set($event)"
+        placeholder="Min. 6 characters"
+      />
+    </div>
+
+    <button class="btn btn-success w-100 mt-2" (click)="register()" [disabled]="isLoading()">
+      {{ isLoading() ? 'Creating account...' : 'Create Account' }}
+    </button>
+
+    <p class="text-center mt-3 mb-0">Already have an account? <a routerLink="/login">Log in</a></p>
+  </div>
+</div>
