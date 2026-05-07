@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from 'firebase/auth';
 
 
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyC6a2AV0uzI9_pAxQfF1elrShXqmiLUCmo",
     authDomain: "wellness-tracking-app.firebaseapp.com",
     projectId: "wellness-tracking-app",
