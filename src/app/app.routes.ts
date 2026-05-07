@@ -8,13 +8,15 @@ import { Register } from './register/register';
 
 import { authGuard } from './guards/auth.guard';
 import { publicGuard } from './guards/public.guard';
+import { GuestDashboard } from './guestDashboard/guestDashboard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-
   { path: 'login', component: Login, canActivate: [publicGuard] },
   { path: 'register', component: Register, canActivate: [publicGuard] },
+
+  { path: 'dashboard', component: GuestDashboard, canActivate: [authGuard] },
 
   { path: 'habit', component: HabitsComponent, canActivate: [authGuard] },
   { path: 'discussion', component: DiscussionComponent, canActivate: [authGuard] },
