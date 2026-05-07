@@ -1,0 +1,109 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="card p-3 mb-4">
+    <h5>Start New Discussion</h5>
+
+    <input
+      type="text"
+      placeholder="Title"
+      class="form-control mb-2"
+      [ngModel]="title()"
+      (ngModelChange)="title.set($event)"
+    />
+
+    <textarea
+      placeholder="Write your message..."
+      class="form-control mb-2"
+      [ngModel]="message()"
+      (ngModelChange)="message.set($event)"
+    ></textarea>
+
+    @if (selectedDiscussion()) {
+      <button (click)="editDiscussion()" class="btn btn-warning">Edit</button>
+    } @else {
+      <button (click)="addDiscussion()" class="btn btn-primary">Post</button>
+    }
+  </div>
+
+  <h5>Discussions</h5>
+
+  @for (d of discussionService.discussions(); track d.id) {
+    <div class="card p-3 mb-3">
+
+      <h6>{{ d.title }}</h6>
+      <p>{{ d.message }}</p>
+
+      <p class="text-muted">
+        Posted by: {{ d.userName }} | {{ d.createdAt.toDate() | date:'short' }}
+      </p>
+
+      @if (d.userId === discussionService.userService.currentUser()?.id) {
+        <div class="d-flex gap-2 mb-2">
+          <button (click)="selectDiscussion(d)" class="btn btn-sm btn-outline-primary">Edit</button>
+          <button (click)="deleteDiscussion(d)" class="btn btn-sm btn-outline-danger">Delete</button>
+        </div>
+      }
+
+      <input
+        type="text"
+        placeholder="Write a reply..."
+        class="form-control mb-1"
+        [ngModel]="replyMessage()"
+        (ngModelChange)="replyMessage.set($event)"
+      />
+
+      <button class="btn btn-sm btn-primary" (click)="addReply(d.id!)">
+        Reply
+      </button>
+
+      <div class="mt-2" style="margin-left: 20px;">
+        @for (r of replyService.replies(); track r.id) {
+          @if (r.postId === d.id) {
+            <div class="card p-2 mb-1">
+        
+              @if (selectedReply()?.id === r.id) {
+                <input
+                  type="text"
+                  class="form-control mb-1"
+                  [ngModel]="replyEditMessage()"
+                  (ngModelChange)="replyEditMessage.set($event)"
+                />
+        
+                <button class="btn btn-sm btn-warning" (click)="editReply()">
+                  Save
+                </button>
+        
+              } @else {
+                <p>{{ r.message }}</p>
+        
+                <small class="text-muted">
+                  {{ r.userName }} |
+                  {{ r.createdAt.toDate() | date:'short' }}
+                </small>
+              }
+        
+              @if (r.userId === userService.currentUser()?.id) {
+                <div class="d-flex gap-2 mt-1">
+                  <button class="btn btn-sm btn-outline-primary" (click)="selectReply(r)">
+                    Edit
+                  </button>
+        
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteReply(r.id!)">
+                    Delete
+                  </button>
+                </div>
+              }
+        
+            </div>
+          }
+        }
+      </div>
+
+    </div>
+  }
+
+</div>
