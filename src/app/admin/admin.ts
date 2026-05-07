@@ -3,6 +3,8 @@ import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase.config';
 import { DiscussionService } from '../discussion.service';
 import { DatePipe } from '@angular/common';
+import { UserService } from '../services/user-service';
+import { Router } from '@angular/router';
 
 interface User {
   id?: string;
@@ -13,6 +15,7 @@ interface User {
   isActive: boolean;
 }
 
+
 @Component({
   selector: 'app-admin',
   imports: [DatePipe],
@@ -22,6 +25,8 @@ interface User {
 export class AdminComponent {
 
   discussionService = inject(DiscussionService);
+  userService = inject(UserService);
+  router = inject(Router);
 
   users = signal<User[]>([]);
 
@@ -52,4 +57,8 @@ export class AdminComponent {
     this.discussionService.deleteDiscussion(id);
   }
 
+  logout() {
+    this.userService.currentUser.set(null);
+    this.router.navigate(['/login']);
+  }
 }

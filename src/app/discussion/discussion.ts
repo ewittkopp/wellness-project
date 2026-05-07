@@ -3,7 +3,10 @@ import { DiscussionService, Discussion } from '../discussion.service';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ReplyService } from '../reply.service';
-
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase.config';
+import { Router } from '@angular/router';
+import { UserService } from '../services/user-service';
 @Component({
   selector: 'app-discussion',
   imports: [FormsModule, DatePipe],
@@ -14,12 +17,17 @@ export class DiscussionComponent {
 
   discussionService = inject(DiscussionService);
   replyService = inject(ReplyService);
+  router = inject(Router);
 
-  title = signal<string>('');
-  message = signal<string>('');
+  userService = inject(UserService);
+
+  selectedReply = signal<any | null>(null);
+replyEditMessage = signal('');
+
+  title = signal('');
+  message = signal('');
   selectedDiscussion = signal<Discussion | null>(null);
-
-  replyMessage = signal<string>('');
+  replyMessage = signal('');
 
   addDiscussion() {
     this.discussionService.addDiscussion(this.title(), this.message());
@@ -34,13 +42,14 @@ export class DiscussionComponent {
   }
 
   editDiscussion() {
-    const discussion = this.selectedDiscussion();
-    if (!discussion) return;
+    const d = this.selectedDiscussion();
+    if (!d) return;
 
     this.discussionService.editDiscussion(
-      discussion.id!,
+      d.id!,
       this.title(),
-      this.message()
+      this.message(),
+      d.userId
     );
 
     this.selectedDiscussion.set(null);
@@ -48,14 +57,37 @@ export class DiscussionComponent {
     this.message.set('');
   }
 
-  deleteDiscussion(id: string) {
-    this.discussionService.deleteDiscussion(id);
+  deleteDiscussion(d: Discussion) {
+    this.discussionService.deleteDiscussion(d.id!);
   }
 
   addReply(postId: string) {
     if (!this.replyMessage()) return;
-
     this.replyService.addReply(postId, this.replyMessage());
     this.replyMessage.set('');
+  }
+
+  logout() {
+    signOut(auth);
+    this.router.navigate(['/login']);
+  }
+
+  selectReply(r: any) {
+    this.selectedReply.set(r);
+    this.replyEditMessage.set(r.message);
+  }
+  
+  editReply() {
+    const r = this.selectedReply();
+    if (!r) return;
+  
+    this.replyService.editReply(r.id, this.replyEditMessage());
+  
+    this.selectedReply.set(null);
+    this.replyEditMessage.set('');
+  }
+  
+  deleteReply(id: string) {
+    this.replyService.deleteReply(id);
   }
 }

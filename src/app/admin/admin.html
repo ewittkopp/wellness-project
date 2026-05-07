@@ -1,10 +1,11 @@
+
 <div class="container mt-4">
 
-  <h4>Wellness Tracking App – Admin Dashboard</h4>
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
 
-  <!-- <button class="btn btn-outline-secondary" (click)="logout()">
-    Logout
-  </button> -->
+  <h3>Wellness Tracking App – Admin Dashboard</h3>
 
   <h5 class="mt-4">User Management</h5>
 
@@ -23,16 +24,15 @@
         <tr>
           <td>{{ u.firstName }} {{ u.lastName }}</td>
           <td>{{ u.email }}</td>
-          <td>{{ u.isActive ? 'Active' : 'Suspended' }}</td>
+          <td>{{ u.isActive ? 'Active' : 'Inactive' }}</td>
 
           <td>
-            @if (u.isActive) {
-              <button 
-                class="btn btn-danger btn-sm"
-                (click)="deactivateUser(u.id!)">
-                Deactivate
-              </button>
-            }
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deactivateUser(u.id!)"
+              [disabled]="u.id === userService.currentUser()?.id">
+              Deactivate
+            </button>
           </td>
         </tr>
       }
@@ -41,12 +41,12 @@
 
   <h5 class="mt-4">User Activity Overview</h5>
 
-  <div class="card p-3 mb-3" style="max-width: 300px;">
+  <div class="card p-3 mb-4">
     <p>Total Users: {{ users().length }}</p>
     <p>Total Discussions: {{ discussionService.discussions().length }}</p>
   </div>
 
-  <h5 class="mt-4">Discussion Moderation</h5>
+  <h5>Discussion Moderation</h5>
 
   <table class="table table-bordered mt-2">
     <thead>
@@ -62,11 +62,11 @@
       @for (d of discussionService.discussions(); track d.id) {
         <tr>
           <td>{{ d.title }}</td>
-          <td>{{ d.userId }}</td>
+          <td>{{ d.userName }}</td>
           <td>{{ d.createdAt.toDate() | date:'short' }}</td>
 
           <td>
-            <button 
+            <button
               class="btn btn-danger btn-sm"
               (click)="deletePost(d.id!)">
               Remove

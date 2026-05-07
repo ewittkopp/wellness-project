@@ -1,50 +1,75 @@
-import { Injectable, signal } from '@angular/core';
-import { collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { Injectable, signal, inject } from '@angular/core';
+import {
+  collection,
+  doc,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore';
 import { db } from './firebase.config';
+import { UserService } from './services/user-service';
 
 export interface Habit {
   id?: string;
-userId: string;
-name: string;
-frequency: 'Daily' | 'Weekly';
-startDate: any;
-completedDays: number;
-trackedDays: number;
-completionRate: number;
-createdAt: any;
-updatedAt: any;
-
+  userId: string;
+  name: string;
+  frequency: 'Daily' | 'Weekly';
+  startDate: any;
+  completedDays: number;
+  trackedDays: number;
+  completionRate: number;
+  createdAt: any;
+  updatedAt: any;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class HabitService {
 
   habits = signal<Habit[]>([]);
   private habitCollection = collection(db, 'habits');
+  userService = inject(UserService);
 
   constructor() {
-    this.loadHabits();
+    this.loadHabits(); 
   }
+
 
   loadHabits() {
     onSnapshot(this.habitCollection, snapshot => {
-      const data = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-      })) as Habit[];
+      const user = this.userService.currentUser();
+
+      if (!user) {
+        this.habits.set([]); 
+        return;
+      }
+
+      const data = snapshot.docs
+        .map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }) as Habit)
+        .filter(h => h.userId === user.id);
 
       this.habits.set(data);
     });
   }
 
+
   async addHabit(name: string, frequency: 'Daily' | 'Weekly') {
+    const user = this.userService.currentUser();
+
+    if (!user) {
+      alert('Please login first');
+      return;
+    }
+
     const habit: Habit = {
       name,
       frequency,
-      userId: 'demoUser',
+      userId: user.id!, 
       startDate: new Date().toISOString(),
       completedDays: 0,
       trackedDays: 0,
@@ -56,20 +81,12 @@ export class HabitService {
     await addDoc(this.habitCollection, habit);
   }
 
-  getTrackedDays(startDate: any): number {
-    const start = new Date(startDate);
-    const today = new Date();
-
-    const diff = today.getTime() - start.getTime();
-
-    return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
-  }
-
   async markComplete(habit: Habit) {
     const completedDays = habit.completedDays + 1;
-    const trackedDays = this.getTrackedDays(habit.startDate);
+    const trackedDays = habit.trackedDays + 1;
 
-    const completionRate = trackedDays === 0 ? 0 : completedDays / trackedDays;
+    const completionRate =
+      trackedDays === 0 ? 0 : completedDays / trackedDays;
 
     await updateDoc(doc(db, 'habits', habit.id!), {
       completedDays,
