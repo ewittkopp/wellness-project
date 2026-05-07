@@ -6,7 +6,6 @@ import { auth } from '../firebase.config';
 export const publicGuard: CanActivateFn = () => {
   const router = inject(Router);
   console.log('publicGuard triggered'); // add this
-
   return new Promise<boolean | any>((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log('auth state user:', user); // add this

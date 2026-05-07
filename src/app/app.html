@@ -1,1 +1,21 @@
+<!-- This navbar was first implemented in the guest dashboard -->
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: #2e7d32">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-white fs-4" (click)="update()"> Wellness Tracking</a>
+        @if(currentUserAuth()){
+            <div class="ms-auto d-flex gap-2">
+                <a class="fw-bold text-white fs-5">{{userService!.currentUser()?.firstName}} {{userService!.currentUser()?.lastName}}</a>
+                <a class="btn btn-outline-light btn-sm" (click)="logout()">Logout</a>
+            </div>
+        }
+        @else {
+            <div class="ms-auto d-flex gap-2">
+                <a routerLink="/login" class="btn btn-outline-light btn-sm">Login</a>
+                <a routerLink="/register" class="btn btn-light btn-sm fw-bold" style="color: #2e7d32">Get Started</a>
+                <a class="btn btn-outline-light btn-sm" (click)="logout()">Logout</a>
+            </div>
+        }
+    </div>
+</nav>
 <router-outlet></router-outlet>
