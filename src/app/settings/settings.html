@@ -1,74 +1,84 @@
-<nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: #2e7d32">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-white fs-4"> Wellness Tracking</a>
-        <div class="ms-auto d-flex gap-2">
-            <a routerLink="/login" class="btn btn-outline-light btn-sm">Login</a>
-            <a routerLink="/register" class="btn btn-light btn-sm fw-bold" style="color: #2e7d32">Get Started</a>
-            <div class="temp-routing-buttons">
-            </div>
-        </div>
-    </div>
-</nav>
 <div class="container py-4">
 
     <h2 class="mb-4">Settings</h2>
 
-    <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
-    <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
+    @if (errorMessage()) {
+    <div class="alert alert-danger">{{ errorMessage() }}</div>
+    }
+
+    @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+    }
 
     <section class="mb-5">
         <h4>Update Profile Info</h4>
-        <div class="mb-3">
-            <label class="form-label">First Name</label>
-            <input class="form-control" [(ngModel)]="firstName" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Last Name</label>
-            <input class="form-control" [(ngModel)]="lastName" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control" type="email" [(ngModel)]="email" />
-        </div>
-        <button class="btn btn-success" (click)="updateProfile()" [disabled]="isLoading()">Save Profile</button>
+
+        <input class="form-control mb-2" placeholder="New First Name" [value]="firstName()"
+            (input)="firstName.set($event.target.value)" />
+
+        <input class="form-control mb-2" placeholder="New Last Name" [value]="lastName()"
+            (input)="lastName.set($event.target.value)" />
+
+        <input class="form-control mb-3" placeholder="New Email" type="email" [value]="email()"
+            (input)="email.set($event.target.value)" />
+
+        <button class="btn btn-success" (click)="updateProfile()" [disabled]="isLoading()">
+            Save Profile
+        </button>
     </section>
 
     <section class="mb-5">
-        <h4>Notification Preferences</h4>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" [(ngModel)]="notifications().dailyCheckIn" />
-            <label class="form-check-label">Daily Check-In</label>
+        <h4>Notifications</h4>
+
+        <div class="form-check">
+            <input type="checkbox" [checked]="notifications().dailyCheckIn" (change)="notifications.set({
+          ...notifications(),
+          dailyCheckIn: $event.target.checked
+        })" />
+            <label>Daily Check-In</label>
         </div>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" [(ngModel)]="notifications().habitReminder" />
-            <label class="form-check-label">Habit Reminder</label>
+
+        <div class="form-check">
+            <input type="checkbox" [checked]="notifications().habitReminder" (change)="notifications.set({
+          ...notifications(),
+          habitReminder: $event.target.checked
+        })" />
+            <label>Habit Reminder</label>
         </div>
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" [(ngModel)]="notifications().weeklySummary" />
-            <label class="form-check-label">Weekly Summary</label>
+
+        <div class="form-check">
+            <input type="checkbox" [checked]="notifications().weeklySummary" (change)="notifications.set({
+          ...notifications(),
+          weeklySummary: $event.target.checked
+        })" />
+            <label>Weekly Summary</label>
         </div>
-        <button class="btn btn-success" (click)="updateProfile()" [disabled]="isLoading()">Save
-            Notifications</button>
+
+        <button class="btn btn-success mt-3" (click)="updateNotifications()" [disabled]="isLoading()">
+            Save Notifications
+        </button>
     </section>
 
     <section class="mb-5">
         <h4>Change Password</h4>
-        <div class="mb-3">
-            <label class="form-label">New Password</label>
-            <input class="form-control" type="password" [(ngModel)]="password" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Confirm Password</label>
-            <input class="form-control" type="password" [(ngModel)]="confirmPassword" />
-        </div>
-        <button class="btn btn-warning" (click)="changePassword()" [disabled]="isLoading()">Update Password</button>
+
+        <input class="form-control mb-2" type="password" placeholder="New password" [value]="password()"
+            (input)="password.set($event.target.value)" />
+
+        <input class="form-control mb-3" type="password" placeholder="Confirm password" [value]="confirmPassword()"
+            (input)="confirmPassword.set($event.target.value)" />
+
+        <button class="btn btn-warning" (click)="changePassword()" [disabled]="isLoading()">
+            Update Password
+        </button>
     </section>
 
-    <section class="mb-5">
+    <section>
         <h4>Deactivate Account</h4>
-        <p class="text-muted">This action cannot be undone.</p>
-        <button class="btn btn-danger" (click)="deactivateAccount()" [disabled]="isLoading()">Deactivate
-            Account</button>
+
+        <button class="btn btn-danger" (click)="deactivateAccount()" [disabled]="isLoading()">
+            Deactivate Account
+        </button>
     </section>
 
 </div>

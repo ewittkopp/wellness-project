@@ -1,13 +1,12 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DailyCheckInService, CheckIn } from '../services/daily-check-in.service';
+import { DailyCheckInService } from '../services/daily-check-in.service';
 import { UserService } from '../services/user-service';
 
 @Component({
   selector: 'app-daily-check-in',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './daily-check-in.html',
   styleUrls: ['./daily-check-in.css']
 })
@@ -15,6 +14,7 @@ export class DailyCheckIn {
 
   mood = signal(3);
   reflection = signal('');
+
   errorMessage = signal('');
   successMessage = signal('');
   isLoading = signal(false);
@@ -25,32 +25,47 @@ export class DailyCheckIn {
   ) {
     effect(() => {
       const user = this.userService.currentUser();
-      if (user) {
-        this.checkInService.loadCheckIns();
-      } else {
+
+      if (!user) {
         this.checkInService.stopListening();
+        return;
       }
+
+      this.checkInService.loadCheckIns();
     });
   }
 
   async submitCheckIn() {
     this.errorMessage.set('');
     this.successMessage.set('');
-    if (this.reflection().trim() === '') {
-      this.errorMessage.set('Please write a reflection before submitting.');
+
+    if (!this.reflection().trim()) {
+      this.errorMessage.set('Reflection is required');
       return;
     }
 
     this.isLoading.set(true);
+
     try {
-      await this.checkInService.addCheckIn(this.mood(), this.reflection());
-      this.successMessage.set('Check-in submitted successfully!');
-      this.reflection.set('');
+      await this.checkInService.addCheckIn(
+        this.mood(),
+        this.reflection()
+      );
+
+      this.successMessage.set('Check-in submitted');
+
       this.mood.set(3);
-    } catch (err: any) {
-      this.errorMessage.set(err.message || 'Failed to submit check-in.');
+      this.reflection.set('');
+
+    } catch (e: any) {
+      this.errorMessage.set(e.message || 'Failed to submit');
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  onReflectionInput(event: Event) {
+    const value = (event.target as HTMLTextAreaElement).value;
+    this.reflection.set(value);
   }
 }

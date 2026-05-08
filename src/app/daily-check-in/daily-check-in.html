@@ -1,40 +1,63 @@
 <section class="py-5" style="background-color: #f1f8e9">
+
     <div class="container">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold mb-1">Daily Check-In</h2>
-                <p class="text-muted mb-0">Reflect on your day with guided prompts tailored to your wellness.</p>
-            </div>
-        </div>
+        <h2 class="fw-bold mb-2">Daily Check-In</h2>
+        <p class="text-muted mb-4">
+            Reflect on your day with guided prompts
+        </p>
+        @if (errorMessage()) {
+        <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
 
-        <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
-        <div *ngIf="successMessage()" class="alert alert-success">{{ successMessage() }}</div>
+        @if (successMessage()) {
+        <div class="alert alert-success">{{ successMessage() }}</div>
+        }
 
         <div class="mb-3">
-            <label class="form-label fw-bold">Mood Rating (1 = low, 5 = high)</label>
-            <input type="range" min="1" max="5" [(ngModel)]="mood" class="form-range" />
+            <label class="form-label fw-bold">Mood (1–5)</label>
+
+            <input type="range" min="1" max="5" class="form-range" [value]="mood()"
+                (input)="mood.set($event.target.valueAsNumber)" />
+
             <div>Mood: {{ mood() }}</div>
         </div>
 
         <div class="mb-3">
             <label class="form-label fw-bold">Reflection</label>
-            <textarea [(ngModel)]="reflection" class="form-control" rows="4" placeholder="How was your day?"></textarea>
+
+            <textarea class="form-control" rows="4" placeholder="How was your day?" [value]="reflection()"
+                (input)="onReflectionInput($event)"></textarea>
         </div>
 
-        <button class="btn btn-success" (click)="submitCheckIn()" [disabled]="isLoading()">Submit Check-In</button>
-        <h4 class="mt-5 fw-bold">Previous Check-Ins</h4>
+        <button class="btn btn-success" (click)="submitCheckIn()" [disabled]="isLoading()">
+            Submit Check-In
+        </button>
+
+        <hr class="my-4" />
+
+        <h4 class="fw-bold">Previous Check-Ins</h4>
+
         <div class="row g-3">
-            <div class="col-md-4" *ngFor="let checkIn of checkInService.checkIns()">
+
+            @for (checkIn of checkInService.checkIns(); track checkIn.id) {
+            <div class="col-md-4">
+
                 <div class="card border-0 shadow-sm h-100">
+
                     <div class="card-body">
                         <p><strong>Date:</strong> {{ checkIn.date }}</p>
                         <p><strong>Mood:</strong> {{ checkIn.mood }}</p>
-                        <p><strong>Reflection:</strong> {{ checkIn.reflection }}</p>
+                        <p>{{ checkIn.reflection }}</p>
                     </div>
+
                 </div>
+
             </div>
+            }
+
         </div>
 
     </div>
+
 </section>
