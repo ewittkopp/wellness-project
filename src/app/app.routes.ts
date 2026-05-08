@@ -15,7 +15,7 @@ import { Goals } from './goals/goals';
 import { Settings } from './settings/settings';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', component: GuestDashboard, canActivate: [publicGuard]},
 
     { path: 'login', component: Login, canActivate: [publicGuard] },
     { path: 'register', component: Register, canActivate: [publicGuard] },
