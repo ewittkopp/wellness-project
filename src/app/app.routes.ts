@@ -13,6 +13,7 @@ import { GuestDashboard } from './guestDashboard/guestDashboard';
 import { DailyCheckIn } from './daily-check-in/daily-check-in';
 import { Goals } from './goals/goals';
 import { Settings } from './settings/settings';
+import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
     { path: '', component: GuestDashboard, canActivate: [publicGuard]},
@@ -20,7 +21,7 @@ export const routes: Routes = [
     { path: 'login', component: Login, canActivate: [publicGuard] },
     { path: 'register', component: Register, canActivate: [publicGuard] },
 
-    { path: 'dashboard', component: GuestDashboard, canActivate: [authGuard] },
+    { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
 
     { path: 'habit', component: HabitsComponent, canActivate: [authGuard] },
     { path: 'discussion', component: DiscussionComponent, canActivate: [authGuard] },
