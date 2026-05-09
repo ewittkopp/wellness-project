@@ -3,10 +3,13 @@
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: #2e7d32">
     {{update()}}
     <div class="container">
-        <a class="navbar-brand fw-bold text-white fs-4" ()="update()"> Wellness Tracking</a>
+        <a routerLink="/home" class="navbar-brand fw-bold text-white fs-4" ()="update()"> Wellness Tracking</a>
         @if(currentUserAuth()){
             <div class="ms-auto d-flex gap-2">
                 <!-- <a class="fw-bold text-white fs-5">Logged in</a> -->
+                <a routerLink="/dashboard" class="btn btn-outline-light btn-sm"> Dashboard</a>
+                <a routerLink="/goals" class="btn btn-outline-light btn-sm"> Goals</a>
+                <a routerLink="/daily-check-in" class="btn btn-outline-light btn-sm"> Daily Check-In</a>
                 <a routerLink="/habit" class="btn btn-outline-light btn-sm"> Habits</a>
                 <a routerLink="/discussion" class="btn btn-outline-light btn-sm"> Discussions</a>
                 <a routerLink="/settings" class="btn btn-outline-light btn-sm"> Account Settings</a>
