@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterOutlet, RouterLinkWithHref, Router } from '@angular/router';
 import { auth } from './firebase.config';
 import { UserService } from './services/user-service';
 @Component({
@@ -12,11 +12,13 @@ export class App {
   protected readonly title = signal('wellness-project');
   userService = inject(UserService)
   currentUserAuth = signal(auth.currentUser);
+  router = inject(Router)
   logout(){
     auth.signOut();
-    this.update();
+    this.currentUserAuth = signal(auth.currentUser);
+    this.router.navigate(['/dashboard'])
   }
   update(){
     this.currentUserAuth = signal(auth.currentUser);
   }
-  }
+}
