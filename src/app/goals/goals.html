@@ -1,0 +1,78 @@
+<section class="py-5 bg-white">
+    <div class="container">
+
+        <h2 class="fw-bold mb-3">Add New Goal</h2>
+
+        @if (errorMessage()) {
+        <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        @if (successMessage()) {
+        <div class="alert alert-success">{{ successMessage() }}</div>
+        }
+
+        <div class="mb-3">
+
+            <input class="form-control mb-2" placeholder="Goal Title" [value]="newTitle()"
+                (input)="newTitle.set($event.target.value)" />
+
+            <textarea class="form-control mb-2" rows="2" placeholder="Goal Description" [value]="newDescription()"
+                (input)="onDescriptionInput($event)"></textarea>
+
+            <input type="number" class="form-control mb-2" placeholder="Target Value" [value]="newTargetValue()"
+                (input)="newTargetValue.set($event.target.valueAsNumber)" />
+
+            <button class="btn btn-success" (click)="addGoal()" [disabled]="isLoading()">
+                Add Goal
+            </button>
+
+        </div>
+
+        <hr />
+
+        <h2 class="fw-bold mb-3">My Goals</h2>
+
+        <div class="row g-3">
+
+            @for (goal of goalsService.goals(); track goal.id) {
+            <div class="col-md-4">
+
+                <div class="card h-100 border-0 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="fw-bold">{{ goal.title }}</h5>
+                        <p class="text-muted">{{ goal.description }}</p>
+
+                        <div class="progress mb-2" style="height: 10px">
+                            <div class="progress-bar" [style.width.%]="(goal.currentProgress / goal.targetValue) * 100"
+                                style="background-color: #2e7d32;"></div>
+                        </div>
+
+                        <small>
+                            {{ goal.currentProgress }} / {{ goal.targetValue }}
+                        </small>
+
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+
+                        <button class="btn btn-sm btn-outline-danger" (click)="deleteGoal(goal.id!)">
+                            Delete
+                        </button>
+
+                        @if (goal.completed) {
+                        <span class="badge bg-success">Completed</span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+            }
+
+        </div>
+
+    </div>
+</section>

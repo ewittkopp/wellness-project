@@ -11,7 +11,7 @@ export interface UserNotifications {
   weeklySummary: boolean;
 }
 
-// Updated User interface
+
 export interface User {
   id?: string;
   firstName: string;

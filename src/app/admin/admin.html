@@ -1,0 +1,80 @@
+
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
+
+  <h3>Wellness Tracking App – Admin Dashboard</h3>
+
+  <h5 class="mt-4">User Management</h5>
+
+  <table class="table table-bordered mt-2">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Deactivate</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (u of users(); track u.id) {
+        <tr>
+          <td>{{ u.firstName }} {{ u.lastName }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.isActive ? 'Active' : 'Inactive' }}</td>
+
+          <td>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deactivateUser(u.id!)"
+              [disabled]="u.id === userService.currentUser()?.id">
+              Deactivate
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <h5 class="mt-4">User Activity Overview</h5>
+
+  <div class="card p-3 mb-4">
+    <p>Total Users: {{ users().length }}</p>
+    <p>Total Discussions: {{ discussionService.discussions().length }}</p>
+  </div>
+
+  <h5>Discussion Moderation</h5>
+
+  <table class="table table-bordered mt-2">
+    <thead>
+      <tr>
+        <th>Post Title</th>
+        <th>Posted By</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (d of discussionService.discussions(); track d.id) {
+        <tr>
+          <td>{{ d.title }}</td>
+          <td>{{ d.userName }}</td>
+          <td>{{ d.createdAt.toDate() | date:'short' }}</td>
+
+          <td>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deletePost(d.id!)">
+              Remove
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</div>

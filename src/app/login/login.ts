@@ -1,15 +1,16 @@
 import { Component, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../firebase.config';
-import { UserService } from '../services/user-service';
+import { UserService, User } from '../services/user-service';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase.config';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
 })
 export class Login {
@@ -30,8 +31,34 @@ export class Login {
         this.email(),
         this.password()
       );
-      this.userService.loadCurrentUser(credential.user.uid);
-      this.router.navigate(['/dashboard']);
+
+      // use getDoc instead of onSnapshot so we wait for the data directly
+      const userRef = doc(db, 'users', credential.user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        this.errorMessage.set('User account not found.');
+        await signOut(auth);
+        return;
+      }
+
+      const user = { id: userSnap.id, ...userSnap.data() } as User;
+
+      // also update the signal so the rest of the app has the user
+      this.userService.currentUser.set(user);
+
+      if (!user.isActive) {
+        this.errorMessage.set('Sorry, your account is deactivated.');
+        await signOut(auth);
+        return;
+      }
+
+      if (user.role === 'admin') {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
+
     } catch (error: any) {
       this.errorMessage.set(this.getFriendlyError(error.code));
     } finally {
